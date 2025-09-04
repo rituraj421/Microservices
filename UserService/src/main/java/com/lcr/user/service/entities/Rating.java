@@ -15,4 +15,7 @@ public class Rating {
     private String hotelId;
     private String rating;
     private String feedback;
+
+    // mapping rating with user
+    private Hotel hotel;
 }
