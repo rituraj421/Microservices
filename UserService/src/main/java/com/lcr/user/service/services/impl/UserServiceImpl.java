@@ -17,6 +17,7 @@ import com.lcr.user.service.entities.Hotel;
 import com.lcr.user.service.entities.Rating;
 import com.lcr.user.service.entities.User;
 import com.lcr.user.service.exceptions.ResourceNotFoundException;
+import com.lcr.user.service.external.services.HotelService;
 import com.lcr.user.service.repositories.UserRepository;
 import com.lcr.user.service.services.UserService;
 
@@ -29,6 +30,10 @@ public class UserServiceImpl implements UserService {
     // for service calling , implementation, (like from user to rating)
     @Autowired
     private RestTemplate restTemplate;
+
+    // injecting feign client
+    @Autowired
+    private HotelService hotelService;
 
     private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -55,7 +60,7 @@ public class UserServiceImpl implements UserService {
                 // http://localhost:8083/ratings/users/0d5bdb25-2b02-488b-a48b-1e48bb3066ab
 
         // @SuppressWarnings("unchecked")
-        Rating[] ratingsOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+user.getUserId(), Rating[].class);
+        Rating[] ratingsOfUser = restTemplate.getForObject("http://RATINGSERVICE/ratings/users/"+user.getUserId(), Rating[].class);
         
         logger.info("{}",ratingsOfUser);
 
@@ -64,8 +69,9 @@ public class UserServiceImpl implements UserService {
         List<Rating> ratingList = ratings.stream().map(rating->{
 
             // http://localhost:8082/hotels/af0ab699-a0a7-48a6-afd7-290f394b81d1
-            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://localhost:8082/hotels/"+rating.getHotelId(), Hotel.class);
-            Hotel hotel = forEntity.getBody();
+            // ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTELSERVICE/hotels/"+rating.getHotelId(), Hotel.class);
+
+            Hotel hotel = hotelService.getHotel(rating.getHotelId());
 
             // set the hotel rating
             rating.setHotel(hotel);
