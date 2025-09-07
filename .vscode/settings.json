@@ -4,6 +4,6 @@
     "java.dependency.packagePresentation": "hierarchical",
     "java.debug.settings.onBuildFailureProceed": true,
     "maven.view": "flat",
-    "java.project.explorer.showNonJavaResources": false,
+    "java.project.explorer.showNonJavaResources": true,
     "java.project.sourcePaths": []
 }
